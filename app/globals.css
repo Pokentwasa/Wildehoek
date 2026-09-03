@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-limestone text-ink font-sans antialiased;
+    font-feature-settings: 'ss01', 'kern';
+  }
+
+  ::selection {
+    @apply bg-clay text-paper;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif;
+    text-wrap: balance;
+  }
+
+  /* Serif display gets optical weight via Fraunces axes */
+  .font-serif {
+    font-optical-sizing: auto;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Visible, on-brand focus for keyboard users */
+  :focus-visible {
+    outline: 2px solid theme('colors.clay');
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+}
+
+@layer components {
+  /* Small uppercase metadata label */
+  .eyebrow {
+    @apply font-sans text-xs uppercase tracking-label text-earth;
+  }
+
+  /* Editorial text link with a growing underline + nudging arrow */
+  .text-link {
+    @apply relative inline-flex items-center gap-1.5 font-sans text-[0.95rem] text-ink transition-colors duration-300;
+  }
+  .text-link::after {
+    content: '';
+    @apply absolute left-0 -bottom-0.5 h-px w-full origin-left scale-x-0 bg-current transition-transform duration-500;
+    transition-timing-function: var(--ease-editorial);
+  }
+  .text-link:hover::after {
+    @apply scale-x-100;
+  }
+  .text-link .arrow {
+    @apply inline-block translate-x-0 transition-transform duration-300;
+  }
+  .text-link:hover .arrow {
+    @apply translate-x-1;
+  }
+
+  /* Clipped container for internal image movement */
+  .img-clip {
+    @apply relative overflow-hidden;
+  }
+  .img-clip > img {
+    @apply h-full w-full object-cover;
+  }
+}
+
+@layer utilities {
+  .container-editorial {
+    @apply mx-auto w-full max-w-[88rem] px-6 md:px-10 lg:px-16;
+  }
+
+  /* Line-clip reveal target. Content is fully visible without JS. */
+  .reveal-line {
+    display: inline-block;
+  }
+}
+
+/* Progressive enhancement: only hide-before-reveal when JS marks the root ready.
+   Without JS these rules never apply, so all content stays visible + crawlable. */
+html.js-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+html.js-ready [data-reveal-clip] {
+  clip-path: inset(0 0 100% 0);
+}
+
+/* Respect reduced-motion: never hide content, disable smooth scroll. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  html.js-ready [data-reveal],
+  html.js-ready [data-reveal-clip] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}

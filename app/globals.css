@@ -10,7 +10,11 @@
   html {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    scroll-behavior: smooth;
+    /* Lenis (SmoothScroll) drives scroll interpolation in JS when motion is
+       allowed; native smooth-scroll fighting it on top is what causes the
+       stutter/rubber-banding. Reduced-motion users get no Lenis, so their
+       rule below re-enables native smooth for anchor jumps. */
+    scroll-behavior: auto;
   }
 
   body {
